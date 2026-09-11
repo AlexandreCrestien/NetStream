@@ -24,7 +24,7 @@ AND mp.is_main_actor;
 
 -- 4/ La liste des films pour un acteur/actrice donné
 
-SELECT CONCAT(p.person_first_name,' ', p.person_last_name) as actor, m.title
+SELECT CONCAT(p.person_first_name,' ', p.person_last_name) as actor, m.movie_title
 FROM movies as m
 JOIN movie_persons as mp ON m.movie_id = mp.movie_id
 JOIN persons as p ON mp.person_id = p.person_id
