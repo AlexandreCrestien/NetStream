@@ -72,7 +72,8 @@ CREATE TABLE movie_updates (
 
 CREATE TABLE user_favorite_persons (
     user_id INT NOT NULL REFERENCES users(user_id),
-    person_id INT NOT NULL REFERENCES persons(person_id)
+    person_id INT NOT NULL REFERENCES persons(person_id),
+    PRIMARY KEY (user_id, person_id)
 );
 
 CREATE TABLE movie_reviews(
@@ -80,7 +81,8 @@ CREATE TABLE movie_reviews(
     movie_id INT NOT NULL REFERENCES movies(movie_id),
     user_rating SMALLINT CHECK (user_rating BETWEEN 0 AND 5),
     user_comment text,
-    user_favorite_movie boolean DEFAULT FALSE
+    user_favorite_movie boolean DEFAULT FALSE,
+    PRIMARY KEY (user_id, movie_id)
 );
 
 CREATE TABLE movie_persons (
@@ -100,5 +102,6 @@ CREATE TABLE genres (
 
 CREATE TABLE movie_genres (
     genre_id INT NOT NULL REFERENCES genres(genre_id),
-    movie_id INT NOT NULL REFERENCES movies(movie_id)
+    movie_id INT NOT NULL REFERENCES movies(movie_id),
+    PRIMARY KEY (movie_id, genre_id)
 );
