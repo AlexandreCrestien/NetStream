@@ -30,7 +30,7 @@ CREATE TABLE movies (
     movie_synopsis text,
     movie_rating decimal(3,2),
     movie_studio movie_studio,
-    movie_age_classification movie_age DEFAULT '+6',
+    movie_age_classification movie_age DEFAULT '+6'
 );
 
 CREATE TABLE persons (
@@ -42,7 +42,7 @@ CREATE TABLE persons (
     person_birthdate date,
     person_sex person_genre,
     is_actor boolean DEFAULT FALSE,
-    is_director boolean DEFAULT FALSE,
+    is_director boolean DEFAULT FALSE
 );
 
 CREATE TABLE user_updates (
