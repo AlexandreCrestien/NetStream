@@ -30,7 +30,7 @@ JOIN movie_persons as mp ON m.movie_id = mp.movie_id
 JOIN persons as p ON mp.person_id = p.person_id
 WHERE mp.is_actor
 AND p.person_first_name = 'Brad' AND p.person_last_name = 'Pitt' --(ou p.person_id = 1234)
-ORDER BY m.title;
+ORDER BY m.movie_title;
 
 -- 5/ Ajouter un film
 
@@ -62,6 +62,32 @@ ORDER BY created_at DESC
 LIMIT 3;
 
 -- 10/ Lister grâce à une procédure stockée les films d'un réalisateur donné en paramètre
+CREATE OR REPLACE PROCEDURE ListDirectorFilms(
+    director_first_name varchar,
+    director_last_name varchar,
+    INOUT result refcursor
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    OPEN result FOR
+    SELECT m.movie_title
+    FROM persons AS p
+    JOIN movie_persons AS mp
+        ON p.person_id = mp.person_id
+    JOIN movies AS m
+        ON mp.movie_id = m.movie_id
+    WHERE p.is_director = TRUE
+      AND p.person_first_name = director_first_name
+      AND p.person_last_name = director_last_name;
+END;
+$$;
+
+-- pour appeler et montrer le résultat:
+BEGIN;
+CALL ListDirectorFilms('Steven', 'Spielberg', 'liste_de_films');
+FETCH ALL FROM liste_de_films;
+COMMIT;
 
 -- 11/ Gérer les opérations de CRUD pour l'ajout d'un nouvel acteur au sein d'un film via des procédures stockées
 
