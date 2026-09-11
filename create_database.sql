@@ -31,7 +31,6 @@ CREATE TABLE movies (
     movie_rating decimal(3,2),
     movie_studio movie_studio,
     movie_age_classification movie_age DEFAULT '+6',
-    movie_favorites INTEGER
 );
 
 CREATE TABLE persons (
@@ -44,7 +43,6 @@ CREATE TABLE persons (
     person_sex person_genre,
     is_actor boolean DEFAULT FALSE,
     is_director boolean DEFAULT FALSE,
-    user_favorites INTEGER
 );
 
 CREATE TABLE user_updates (
@@ -97,7 +95,6 @@ CREATE TABLE genres (
     genre_id SERIAL PRIMARY KEY,
     created_by INT NOT NULL REFERENCES users(user_id),
     genre_name varchar(50),
-    movies_number integer,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
