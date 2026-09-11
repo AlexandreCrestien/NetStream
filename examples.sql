@@ -91,6 +91,112 @@ COMMIT;
 
 -- 11/ Gérer les opérations de CRUD pour l'ajout d'un nouvel acteur au sein d'un film via des procédures stockées
 
+-- CREATE : ajouter un nouvel acteur à un film
+
+CREATE PROCEDURE AddNewActorToMovie(
+    p_first_name     varchar,
+    p_last_name      varchar,
+    p_birthdate      date,
+    p_sex            varchar,
+    p_movie_id       int,
+    p_actor_role     varchar,
+    p_is_main_actor  boolean
+)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    v_person_id int;
+BEGIN
+    INSERT INTO persons (person_first_name, person_last_name, person_birthdate,
+                          person_sex, is_actor, is_director, created_at)
+    VALUES (p_first_name, p_last_name, p_birthdate, p_sex, TRUE, FALSE, now())
+    RETURNING person_id INTO v_person_id;
+
+    INSERT INTO movie_persons (movie_id, person_id, person_movie_job,
+                                actor_movie_role, is_main_actor)
+    VALUES (p_movie_id, v_person_id, 'acteur', p_actor_role, p_is_main_actor);
+
+    COMMIT;
+END;
+$$;
+
+-- Appel :
+CALL AddNewActorToMovie('Jennifer', 'Lawrence', '1990-08-15', 'F', 42, 'Katniss', TRUE);
+
+-- READ : lister les acteurs d'un film donné
+
+CREATE PROCEDURE ListActorsOfMovie(
+    p_movie_id   int,
+    INOUT result refcursor
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    OPEN result FOR
+        SELECT p.person_id, p.person_first_name, p.person_last_name,
+               mp.actor_movie_role, mp.is_main_actor
+        FROM persons AS p
+        JOIN movie_persons AS mp
+            ON p.person_id = mp.person_id
+        WHERE mp.movie_id = p_movie_id
+          AND mp.person_movie_job = 'acteur';
+END;
+$$;
+
+-- Appel :
+BEGIN;
+CALL ListActorsOfMovie(42, 'cursor_acteurs');
+FETCH ALL FROM cursor_acteurs;
+COMMIT;
+
+
+-- UPDATE : modifier le rôle / statut d'un acteur dans un film
+
+CREATE PROCEDURE UpdateActorRoleInMovie(
+    p_movie_id       int,
+    p_person_id      int,
+    p_actor_role     varchar,
+    p_is_main_actor  boolean
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    UPDATE movie_persons
+    SET actor_movie_role = p_actor_role,
+        is_main_actor    = p_is_main_actor
+    WHERE movie_id  = p_movie_id
+      AND person_id = p_person_id
+      AND person_movie_job = 'acteur';
+
+    COMMIT;
+END;
+$$;
+
+-- Appel :
+CALL UpdateActorRoleInMovie(42, 17, 'Katniss Everdeen', TRUE);
+
+
+-- DELETE : retirer un acteur d'un film
+
+CREATE PROCEDURE RemoveActorFromMovie(
+    p_movie_id   int,
+    p_person_id  int
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    DELETE FROM movie_persons
+    WHERE movie_id  = p_movie_id
+      AND person_id = p_person_id
+      AND person_movie_job = 'acteur';
+
+    COMMIT;
+END;
+$$;
+
+-- Appel :
+CALL RemoveActorFromMovie(42, 17);
+
 -- 12/ Garder grâce à un trigger une trace de toutes les modifications apportées à la table des utilisateurs. Ainsi, une table d'archive conservera la date de la mise à jour, l'identifiant de l'utilisateur concerné, l'ancienne valeur ainsi que la nouvelle.
 
 CREATE OR REPLACE FUNCTION log_update() RETURNS TRIGGER AS $$
