@@ -10,7 +10,6 @@ movie_synopsis,Synopsis du film,AN,
 movie_rating,Note moyenne des utilisateurs,N,Sur 5
 movie_studio,Studio de production du film (Disney...),AN,
 movie_age_classification,Catégorie d'âge (tout public, -16, etc.),AN,
-user_favorites,Nombre d'utilisateurs ayant ce film en favori,N,>= 0
 
 person_id,identifiant unique de l'acteur / réalisateur,N,Clé primaire
 created_by,Identifiant de l'utilisateur ayant ajouté la personne,N,Clé étrangère #user
@@ -19,7 +18,6 @@ person_first_name,prénom de l'acteur / réalisateur,A,
 person_last_name,patronyme de l'acteur / réalisateur,A,Obligatoire
 person_birthdate,Date de naissance de l'acteur / réalisateur,Date,
 person_sex,Sexe de l'acteur / réalisateur,A,F ou M
-user_favorites,Nombre d'utilisateurs ayant cette personne en favori,N,>= 0
 person_movie_job,Job de la personne dans un film donné,A,1 seule valeur
 is_actor,Est-ce que cette personne est un acteur / une actrice ?,Bool,
 is_director,Est-ce que cette personne est un réalisateur / une réalisatrice ?,Bool,
@@ -46,7 +44,6 @@ genre_id,Identifiant unique du genre,N,Clé primaire
 created_by,Identifiant de l'utilisateur ayant ajouté le genre,N,Clé étrangère #user
 created_at,Date et heure d'ajout du film dans la base de données,Date,> date d'inscription de l'utilisateur et <= jour actuel
 genre_name,Nom du genre (comédie ou drame...),A,Obligatoire
-movies_number,Nombre de films possédant ce genre,N,>= 0
 
 movie_update_id,Identifiant unique de mise à jour d'un film,N,Clé primaire
 updated_by,Identifiant de l'utilisateur ayant mis à jour le film,N,Clé étrangère #user
