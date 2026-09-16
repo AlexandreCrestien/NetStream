@@ -15,7 +15,7 @@ ORDER BY person_last_name, person_first_name;
 
 -- 3/ La liste des acteurs/actrices principaux pour un film donné
 
-SELECT m.movie_titrle, p.person_first_name, p.person_last_name
+SELECT m.movie_title, p.person_first_name, p.person_last_name
 FROM movies AS m
 JOIN movie_persons AS mp ON m.movie_id = mp.movie_id
 JOIN persons AS p ON mp.person_id = p.person_id
@@ -24,23 +24,23 @@ AND mp.is_main_actor;
 
 -- 4/ La liste des films pour un acteur/actrice donné
 
-SELECT CONCAT(p.person_first_name,' ', p.person_last_name) as actor, m.title
+SELECT CONCAT(p.person_first_name,' ', p.person_last_name) as actor, m.movie_title
 FROM movies as m
 JOIN movie_persons as mp ON m.movie_id = mp.movie_id
 JOIN persons as p ON mp.person_id = p.person_id
-WHERE mp.is_actor
+WHERE mp.person_movie_job = 'Actor'
 AND p.person_first_name = 'Brad' AND p.person_last_name = 'Pitt' --(ou p.person_id = 1234)
 ORDER BY m.movie_title;
 
 -- 5/ Ajouter un film
 
 INSERT INTO movies (created_by, movie_title, movie_release_date, movie_duration, movie_language)
-VALUES (1, 'Titanic', '1998-01-07', 194, 'English');
+VALUES (1, 'Titanic', '1998-01-07', 194, 'ENGLISH');
 
 -- 6/ Ajouter un acteur/actrice
 
-INSERT INTO persons (person_first_name, person_last_name, person_birthdate, person_sex)
-VALUES ('Jennifer', 'Lawrence', '1990-08-15', 'F');
+INSERT INTO persons (created_by, person_first_name, person_last_name, person_birthdate, person_sex)
+VALUES (1, 'Jennifer', 'Lawrence', '1990-08-15', 'F');
 
 -- 7/ Modifier un film
 
@@ -49,7 +49,12 @@ SET movie_studio = 'Warner Bros', movie_age_classification = 'Tous publics'
 WHERE movie_title = 'Inception'; --(ou movie_id = 123)
 
 -- 8/ Supprimer un acteur/actrice
-
+DELETE FROM movie_persons
+WHERE person_id = (SELECT person_id FROM persons
+                   WHERE person_first_name = 'Brad' AND person_last_name = 'Pitt');
+DELETE FROM user_favorite_persons
+WHERE person_id = (SELECT person_id FROM persons
+                   WHERE person_first_name = 'Brad' AND person_last_name = 'Pitt');
 DELETE FROM persons
 WHERE person_first_name = 'Brad' AND person_last_name = 'Pitt'; --(ou person_id = 1234)
 

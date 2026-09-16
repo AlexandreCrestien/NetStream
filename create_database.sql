@@ -1,12 +1,13 @@
+DROP DATABASE IF EXISTS netstream;
 CREATE DATABASE netstream;
 
 \c netstream
 
-CREATE TYPE user_update AS ENUM ('name', 'mail', 'password');
+CREATE TYPE user_update AS ENUM ('user_name', 'mail', 'password', 'is_admin');
 CREATE TYPE movie_langage AS ENUM ('FRENCH', 'ENGLISH', 'PORTUGUESE');
-CREATE TYPE movie_studio AS ENUM ('Disney', 'Netflix', 'CANAL+');
-CREATE TYPE movie_age AS ENUM ('+6', '+12', '+16', '+18');
-CREATE TYPE person_genre AS ENUM ('MALE', 'FEMALE', 'OTHER');
+CREATE TYPE movie_studio AS ENUM ('Disney', 'Netflix', 'CANAL+', 'Warner Bros');
+CREATE TYPE movie_age AS ENUM ('Tous publics', '+6', '+12', '+16', '+18');
+CREATE TYPE person_genre AS ENUM ('M', 'F', 'OTHER');
 CREATE TYPE person_update AS ENUM ('name', 'lastname', 'birth_date');
 CREATE TYPE movie_update AS ENUM ('title', 'synopsis', 'duration');
 
