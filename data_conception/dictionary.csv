@@ -1,0 +1,56 @@
+NOM,DESCRIPTION,TYPE,CONTRAINTES
+movie_id,identifiant unique du film,N,Clé primaire
+created_by,Identifiant de l'utilisateur ayant ajouté le film,N,Clé étrangère #user
+created_at,Date et heure d'ajout du film dans la base de données,Date,> date d'inscription de l'utilisateur et <= jour actuel
+movie_title,titre du film,AN,Obligatoire
+movie_release_date,Date de sortie du film,N,Obligatoire et >= 01-01-1890
+movie_duration,Durée du film,N,En minutes
+movie_language,Langage du film (VO),A,
+movie_synopsis,Synopsis du film,AN,
+movie_rating,Note moyenne des utilisateurs,N,Sur 5
+movie_studio,Studio de production du film (Disney...),AN,
+movie_age_classification,Catégorie d'âge (tout public, -16, etc.),AN,
+
+person_id,identifiant unique de l'acteur / réalisateur,N,Clé primaire
+created_by,Identifiant de l'utilisateur ayant ajouté la personne,N,Clé étrangère #user
+created_at,Date et heure d'ajout du film dans la base de données,Date,> date d'inscription de l'utilisateur et <= jour actuel
+person_first_name,prénom de l'acteur / réalisateur,A,
+person_last_name,patronyme de l'acteur / réalisateur,A,Obligatoire
+person_birthdate,Date de naissance de l'acteur / réalisateur,Date,
+person_sex,Sexe de l'acteur / réalisateur,A,F ou M
+person_movie_job,Job de la personne dans un film donné,A,1 seule valeur
+is_actor,Est-ce que cette personne est un acteur / une actrice ?,Bool,
+is_director,Est-ce que cette personne est un réalisateur / une réalisatrice ?,Bool,
+is_main_actor,Est-ce que l'acteur joue un rôle principal du film ?,Bool,
+actor_movie_role,Rôle joué par l'acteur dans le film donné,AN,
+
+user_id,Identifiant unique de l'utilisateur,N,Clé primaire
+is_admin,Est-ce que l'utilisateur est administrateur ?,Bool,
+created_at,Date et heure d'inscription de l'utilisateur,Date,<= jour actuel
+user_name,Pseudonyme de l'utilisateur,AN,Obligatoire
+user_mail,Email de l'utilisateur,AN,Obligatoire et unique
+user_password,Mot de passe de l'utilisateur,AN,Obligatoire + crypté + minimum 8 caractères dont 1 maj + 1 min + 1 caractère spécial + 1 chiffre
+user_rating,Note de l'utilisateur pour un film,N,Sur 5
+user_comment,Commentaire de l'utilisateur sur un film,AN,
+user_favorite_movie,Est-ce que ce film est un favori de l'utilisateur ?,Bool,
+
+user_update_id,Identifiant unique de la mise à jour,N,$
+updated_at,Date et heure de mise à jour des infos utilisateur,Date,Obligatoire et > date d'inscription et <= jour actuel
+updated_field,Champ modifié par l'utilisateur,A,Mail / password / name + 1 seule valeur possible
+old_value,Ancien pseudo de l'utilisateur,AN,Ancienne valeur du champ utilisateur (sauf mot de passe)
+new_value,Nouveau pseudo de l'utilisateur,AN,Nouvelle valeur du champ utilisateur (sauf mot de passe)
+
+genre_id,Identifiant unique du genre,N,Clé primaire
+created_by,Identifiant de l'utilisateur ayant ajouté le genre,N,Clé étrangère #user
+created_at,Date et heure d'ajout du film dans la base de données,Date,> date d'inscription de l'utilisateur et <= jour actuel
+genre_name,Nom du genre (comédie ou drame...),A,Obligatoire
+
+movie_update_id,Identifiant unique de mise à jour d'un film,N,Clé primaire
+updated_by,Identifiant de l'utilisateur ayant mis à jour le film,N,Clé étrangère #user
+updated_at,Date et heure de mise à jour des infos du film,Date,Obligatoire et > date d'inscription et <= jour actuel
+updated_field,Nom du champ du film modifié par l'utilisateur,A,Un unique champ parmi les champs existants pour un film
+
+person_update_id,Identifiant unique de mise à jour d'un acteur / réalisateur,N,Clé primaire
+updated_by,Identifiant de l'utilisateur ayant mis à jour l'acteur / réalisateur,N,Clé étrangère #user
+updated_at,Date et heure de mise à jour des infos de l'acteur / réalisateur,Date,Obligatoire et > date d'inscription et <= jour actuel
+updated_field,Nom du champ de l'acteur / réalisateur modifié par l'utilisateur,A,Un unique champ parmi les champs existants pour un film

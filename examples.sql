@@ -1,68 +1,29 @@
-# NetStream — Base de données
+-- 1/ Les titres et dates de sortie des films du plus récent au plus ancien
 
-Base de données PostgreSQL pour NetStream, une plateforme de streaming (films, séries, documentaires). Elle stocke les films, les acteurs, les réalisateurs, leurs rôles et les préférences des utilisateurs.
-
-## Prérequis
-
-- PostgreSQL installé (version 16 recommandée)
-
-## Installation
-
-Le fichier `create_database.sql` crée la base, les tables et insère quelques données de test.
-
-Depuis un terminal :
-
-```bash
-sudo -u postgres psql -f create_database.sql
-```
-
-La base `netstream` est alors créée et prête à l'emploi.
-
-> Le script commence par `DROP DATABASE IF EXISTS netstream;` : il supprime la base existante avant de la recréer. Pense à fermer toute connexion à `netstream` (DBeaver, etc.) avant de le lancer.
-
-Pour te connecter ensuite à la base :
-
-```bash
-sudo -u postgres psql -d netstream
-```
-
----
-
-## Requêtes
-
-### 1. Les titres et dates de sortie des films du plus récent au plus ancien
-
-```sql
 SELECT movie_title, movie_release_date
 FROM movies
 ORDER BY movie_release_date DESC;
-```
 
-### 2. Les noms, prénoms et âges des acteurs/actrices de plus de 30 ans dans l'ordre alphabétique
+-- 2/ Les noms, prénoms et âges des acteurs/actrices de plus de 30 ans dans l'ordre alphabétique
 
-```sql
 SELECT person_first_name, person_last_name,
 EXTRACT(YEAR FROM AGE(CURRENT_DATE, person_birthdate)) AS age
 FROM persons
 WHERE is_actor
 AND EXTRACT(YEAR FROM AGE(CURRENT_DATE, person_birthdate)) > 30
 ORDER BY person_last_name, person_first_name;
-```
 
-### 3. La liste des acteurs/actrices principaux pour un film donné
+-- 3/ La liste des acteurs/actrices principaux pour un film donné
 
-```sql
 SELECT m.movie_title, p.person_first_name, p.person_last_name
 FROM movies AS m
 JOIN movie_persons AS mp ON m.movie_id = mp.movie_id
 JOIN persons AS p ON mp.person_id = p.person_id
 WHERE m.movie_title = 'The Odyssey'
 AND mp.is_main_actor;
-```
 
-### 4. La liste des films pour un acteur/actrice donné
+-- 4/ La liste des films pour un acteur/actrice donné
 
-```sql
 SELECT CONCAT(p.person_first_name,' ', p.person_last_name) as actor, m.movie_title
 FROM movies as m
 JOIN movie_persons as mp ON m.movie_id = mp.movie_id
@@ -70,33 +31,24 @@ JOIN persons as p ON mp.person_id = p.person_id
 WHERE mp.person_movie_job = 'actor'
 AND p.person_first_name = 'Tom' AND p.person_last_name = 'Holland' --(ou p.person_id = 1234)
 ORDER BY m.movie_title;
-```
 
-### 5. Ajouter un film
+-- 5/ Ajouter un film
 
-```sql
 INSERT INTO movies (created_by, movie_title, movie_release_date, movie_duration, movie_language)
 VALUES (1, 'Titanic', '1998-01-07', 194, 'english');
-```
 
-### 6. Ajouter un acteur/actrice
+-- 6/ Ajouter un acteur/actrice
 
-```sql
 INSERT INTO persons (created_by, person_first_name, person_last_name, person_birthdate, person_sex, is_actor)
 VALUES (1, 'Jennifer', 'Lawrence', '1990-08-15', 'F', TRUE);
-```
 
-### 7. Modifier un film
+-- 7/ Modifier un film
 
-```sql
 UPDATE movies
 SET movie_studio = 'Warner Bros', movie_age_classification = 'all_ages'
 WHERE movie_title = 'The Odyssey'; --(ou movie_id = 123)
-```
 
-### 8. Supprimer un acteur/actrice
-
-```sql
+-- 8/ Supprimer un acteur/actrice
 DELETE FROM movie_persons
 WHERE person_id = (SELECT person_id FROM persons
                    WHERE person_first_name = 'Anne' AND person_last_name = 'Hathaway');
@@ -105,21 +57,16 @@ WHERE person_id = (SELECT person_id FROM persons
                    WHERE person_first_name = 'Anne' AND person_last_name = 'Hathaway');
 DELETE FROM persons
 WHERE person_first_name = 'Anne' AND person_last_name = 'Hathaway'; --(ou person_id = 1234)
-```
 
-### 9. Afficher les 3 derniers acteurs/actrices ajouté(e)s
+-- 9/ Afficher les 3 derniers acteurs/actrices ajouté(e)s
 
-```sql
 SELECT person_first_name, person_last_name
 FROM persons
 WHERE is_actor
 ORDER BY created_at DESC
 LIMIT 3;
-```
 
-### 10. Lister grâce à une procédure stockée les films d'un réalisateur donné
-
-```sql
+-- 10/ Lister grâce à une procédure stockée les films d'un réalisateur donné en paramètre
 CREATE OR REPLACE PROCEDURE ListDirectorFilms(
     director_first_name varchar,
     director_last_name varchar,
@@ -146,11 +93,11 @@ BEGIN;
 CALL ListDirectorFilms('Steven', 'Spielberg', 'liste_de_films');
 FETCH ALL FROM liste_de_films;
 COMMIT;
-```
 
-### 11. CRUD d'un acteur dans un film via des procédures stockées
+-- 11/ Gérer les opérations de CRUD pour l'ajout d'un nouvel acteur au sein d'un film via des procédures stockées
 
-```sql
+-- CREATE : ajouter un nouvel acteur à un film
+
 CREATE OR REPLACE PROCEDURE AddNewActorToMovie(
 	p_created_by     int,
     p_first_name     varchar,
@@ -254,11 +201,9 @@ $$;
 
 -- Appel :
 CALL RemoveActorFromMovie(1, 5);
-```
 
-### 12. Trigger : historique des modifications de la table des utilisateurs
+-- 12/ Garder grâce à un trigger une trace de toutes les modifications apportées à la table des utilisateurs. Ainsi, une table d'archive conservera la date de la mise à jour, l'identifiant de l'utilisateur concerné, l'ancienne valeur ainsi que la nouvelle.
 
-```sql
 CREATE OR REPLACE FUNCTION log_update() RETURNS TRIGGER AS $$
 	BEGIN
 		IF NEW.user_name IS DISTINCT FROM OLD.user_name THEN
@@ -282,8 +227,7 @@ CREATE OR REPLACE FUNCTION log_update() RETURNS TRIGGER AS $$
 
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER  user_update_trigger
+CREATE TRIGGER user_update_trigger
 	AFTER UPDATE ON users
 	FOR EACH ROW
 	EXECUTE FUNCTION log_update();
-```
